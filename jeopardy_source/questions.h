@@ -7,6 +7,7 @@
  * All rights reserved.
  *
  */
+
 #ifndef QUESTIONS_H_
 #define QUESTIONS_H_
 
@@ -15,8 +16,8 @@
 #define MAX_LEN 256
 #define NUM_CATEGORIES 3
 // The number of questions, you can use this in your functions in
-// questions.c, this can be accessed in questions.c
-#define NUM_QUESTIONS 12
+// questions.c, which are 15 standard questions + 1 bonus question
+#define NUM_QUESTIONS 16 
 
 // List of 3 categories as array of strings
 static char categories[NUM_CATEGORIES][MAX_LEN] = {
@@ -34,7 +35,7 @@ typedef struct {
     bool answered;
 } question;
 
-// An array of 12 questions (4 for each category), initialized in initialize_game
+// An array of 16 questions (5 for each category + 1 Bonus), initialized in initialize_game
 // this may need to be a pointer if you want it set dynamically
 question questions[NUM_QUESTIONS];
 
