@@ -11,74 +11,178 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "questions.h"
 
-// Initializes the array of questions for the game
+// Global array to hold Jeopardy questions
+question questions[NUM_QUESTIONS];
+
 void initialize_game(void){
-    // Define the set of questions, each category has different questions and values
-    question temp_questions[NUM_QUESTIONS] = {
-        {"programming", "What is the keyword to define a function in C?", "what is void", 100, false},
-        {"programming", "Which programming language is known as the mother of all languages?", "what is c", 200, false},
-        {"programming", "Which symbol is used for single-line comments in C?", "what is //", 300, false},
-        {"programming", "What is the extension of a C header file?", "what is .h", 400, false},
-        
-        {"algorithms", "Which algorithm is used for sorting with an average time complexity of O(n log n)?", "what is quicksort", 100, false},
-        {"algorithms", "Which algorithm is used to find the shortest path in a graph?", "what is dijkstra", 200, false},
-        {"algorithms", "Which search algorithm repeatedly divides the array in half?", "what is binary search", 300, false},
-        {"algorithms", "Which algorithm is used for traversing trees in depth-first order?", "what is dfs", 400, false},
-        
-        {"databases", "Which SQL command is used to retrieve data from a database?", "what is select", 100, false},
-        {"databases", "What type of database structure organizes data in tables?", "what is relational", 200, false},
-        {"databases", "Which database language is used to manipulate and retrieve data?", "what is sql", 300, false},
-        {"databases", "Which normalization form ensures no transitive dependencies?", "what is third normal form", 400, false}
-    };
+    int i = 0;
     
-    // Copy temporary questions to the global questions array
-    for (int i = 0; i < NUM_QUESTIONS; i++) {
-        questions[i] = temp_questions[i];
+    // ---------- Programming Questions ----------
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "Which language is known for its use in system programming?");
+    strcpy(questions[i].answer, "C");
+    questions[i++].value = 100;
+
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "What is the keyword to define a function in Python?");
+    strcpy(questions[i].answer, "def");
+    questions[i++].value = 200;
+
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "Which language is mainly used for Android app development?");
+    strcpy(questions[i].answer, "Java");
+    questions[i++].value = 300;
+
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "Which does const mean in C language when used before a variable?");
+    strcpy(questions[i].answer, "Immutable");
+    questions[i++].value = 400;
+
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "Which language is commonly used for AI and machine learning?");
+    strcpy(questions[i].answer, "Python");
+    questions[i++].value = 500;
+
+// **Bonus Question - 600 Points**
+    strcpy(questions[i].category, "programming");
+    strcpy(questions[i].question, "Which programming language is used to develop iOS applications?");
+    strcpy(questions[i].answer, "Swift");
+    questions[i++].value = 600;
+
+    // ---------- Algorithms Questions ----------
+    strcpy(questions[i].category, "algorithms");
+    strcpy(questions[i].question, "Which algorithm is used to find the shortest path in a graph?");
+    strcpy(questions[i].answer, "Dijkstra");
+    questions[i++].value = 100;
+
+    strcpy(questions[i].category, "algorithms");
+    strcpy(questions[i].question, "Which sorting algorithm has an average time complexity of O(n log n)?");
+    strcpy(questions[i].answer, "Merge Sort");
+    questions[i++].value = 200;
+
+    strcpy(questions[i].category, "algorithms");
+    strcpy(questions[i].question, "Which algorithm is used for searching in a balanced BST?");
+    strcpy(questions[i].answer, "Binary Search");
+    questions[i++].value = 300;
+
+    strcpy(questions[i].category, "algorithms");
+    strcpy(questions[i].question, "Which algorithm uses a priority queue and is optimal for greedy selection?");
+    strcpy(questions[i].answer, "Prim's");
+    questions[i++].value = 400;
+
+    strcpy(questions[i].category, "algorithms");
+    strcpy(questions[i].question, "What is the best-case time complexity of QuickSort?");
+    strcpy(questions[i].answer, "O(n log n)");
+    questions[i++].value = 500;
+
+    // ---------- Databases Questions ----------
+    strcpy(questions[i].category, "databases");
+    strcpy(questions[i].question, "Which database language is used to query relational databases?");
+    strcpy(questions[i].answer, "SQL");
+    questions[i++].value = 100;
+
+    strcpy(questions[i].category, "databases");
+    strcpy(questions[i].question, "Which type of database does MongoDB represent?");
+    strcpy(questions[i].answer, "NoSQL");
+    questions[i++].value = 200;
+
+    strcpy(questions[i].category, "databases");
+    strcpy(questions[i].question, "Which type of database model organizes data in parent-child relationships?");
+    strcpy(questions[i].answer, "Hierarchical");
+    questions[i++].value = 300;
+
+    strcpy(questions[i].category, "databases");
+    strcpy(questions[i].question, "What is the key feature of NoSQL databases that makes them different from SQL databases?");
+    strcpy(questions[i].answer, "Schema-less");
+    questions[i++].value = 400;
+
+    strcpy(questions[i].category, "databases");
+    strcpy(questions[i].question, "Which type of database is optimized for analytical queries?");
+    strcpy(questions[i].answer, "OLAP");
+    questions[i++].value = 500;
+
+    // Mark all questions as unanswered initially
+    for (int j = 0; j < NUM_QUESTIONS; j++) {
+        questions[j].answered = false;
     }
 }
 
-// Displays each of the remaining categories and questions dollar values that have not been answered
+/*
+ * Prints out all available categories and their respective dollar values
+ * for questions that have not been answered yet.
+ */
 void display_categories(void) {
-    printf("\nCategories and available questions:\n");
-    for (int i = 0; i < NUM_CATEGORIES; i++) {
-        printf("%s: ", categories[i]);
-        for (int j = 0; j < NUM_QUESTIONS; j++) {
-            if (strcmp(questions[j].category, categories[i]) == 0 && !questions[j].answered) {
-                printf("$%d ", questions[j].value);
-            }
+    printf("\nAvailable Categories and Question Values:\n");
+    for (int i = 0; i < NUM_QUESTIONS; i++) {
+        if (!questions[i].answered) {
+            printf("%s - $%d\n", questions[i].category, questions[i].value);
         }
-        printf("\n");
     }
 }
 
-// Displays the question for the category and dollar value
+/*
+ * Displays the question for the given category and value.
+ * If the question has already been answered, it notifies the user.
+ */
 void display_question(char *category, int value) {
     for (int i = 0; i < NUM_QUESTIONS; i++) {
-        if (strcmp(questions[i].category, category) == 0 && questions[i].value == value && !questions[i].answered) {
-            printf("Question: %s\n", questions[i].question);
-            return;
-        }
-    }
-    printf("Question not found or already answered.\n");
-}
-
-// Returns true if the answer is correct for the question for that category and dollar value
-bool valid_answer(char *category, int value, char *answer){
-    for (int i = 0; i < NUM_QUESTIONS; i++) {
         if (strcmp(questions[i].category, category) == 0 && questions[i].value == value) {
-            if (strcasecmp(questions[i].answer, answer) == 0) { // Case-insensitive comparison
-                questions[i].answered = true; // Mark question as answered
-                return true;
+            if (!questions[i].answered) {
+                printf("\nQuestion: %s\n", questions[i].question);
+                return;
+            }
+            else {
+                printf("This question has already been answered.\n");
+                return;
             }
         }
     }
-    return false;
+    printf("Invalid category or value.\n");
 }
 
-// Returns true if the question has already been answered
-bool already_answered(char *category, int value){
+/*
+ * Validates the player's answer by checking if it starts with "what is" or "who is"
+ * and then compares the actual answer against the correct one.
+ *
+ * Returns:
+ * - true: if the answer is correct and properly formatted
+ * - false: if the answer is incorrect or not formatted properly
+ */
+bool valid_answer(char *category, int value, char *answer) {
+    for (int i = 0; i < NUM_QUESTIONS; i++) {
+        if (strcmp(questions[i].category, category) == 0 && questions[i].value == value) {
+            if (!questions[i].answered) {
+                // Tokenize answer to check required format
+                char *token = strtok(answer, " ");
+                if (token == NULL || (strcmp(token, "what") != 0 && strcmp(token, "who") != 0)) {
+                    return false;
+                }
+                token = strtok(NULL, " ");
+                if (token == NULL || strcmp(token, "is") != 0) {
+                    return false;
+                }
+                token = strtok(NULL, " ");
+                if (token != NULL && strcmp(token, questions[i].answer) == 0) {
+                    questions[i].answered = true;
+                    return true; // Correctly formatted and correct answer
+                }
+            }
+        }
+    }
+    return false; // Either incorrect answer or formatting issue
+}
+
+/*
+ * Checks if a question with the given category and value has already been answered.
+ *
+ * Returns:
+ * - true: if the question has been answered
+ * - false: if the question is still available
+ */
+bool already_answered(char *category, int value) {
     for (int i = 0; i < NUM_QUESTIONS; i++) {
         if (strcmp(questions[i].category, category) == 0 && questions[i].value == value) {
             return questions[i].answered;
