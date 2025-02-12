@@ -8,21 +8,39 @@
  *
  */
 
-#include "players.h"
 #include <stdio.h>
 #include <string.h>
+#include "players.h"
 
-void initialize_players(Player players[PLAYER_COUNT]) {
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        printf("Enter name for Player %d: ", i+1);
+void initializePlayers(Player players[], int numPlayers) {
+    for (int i = 0; i < numPlayers; i++) {
+        printf("Enter player %d name: ", i + 1);
         scanf("%s", players[i].name);
         players[i].score = 0;
     }
 }
 
-void display_scores(const Player players[PLAYER_COUNT]) {
-    printf("Current Scores:\n");
-    for (int i = 0; i < PLAYER_COUNT; i++) {
+int isValidPlayer(Player players[], int numPlayers, const char* playerName) {
+    for (int i = 0; i < numPlayers; i++) {
+        if (strcmp(players[i].name, playerName) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void updateScore(Player players[], int numPlayers, const char* playerName, int dollarAmount) {
+    for (int i = 0; i < numPlayers; i++) {
+        if (strcmp(players[i].name, playerName) == 0) {
+            players[i].score += dollarAmount;
+        }
+    }
+}
+
+void displayFinalScores(Player players[], int numPlayers) {
+printf("\033[48;5;89mWe have a WINNER!🥳🥳\033[0m\n");
+ printf("\nFinal Scores:\n");
+    for (int i = 0; i < numPlayers; i++) {
         printf("%s: $%d\n", players[i].name, players[i].score);
     }
 }
