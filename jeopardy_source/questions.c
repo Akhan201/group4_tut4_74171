@@ -108,6 +108,8 @@ void initialize_game(void){
     for (int j = 0; j < NUM_QUESTIONS; j++) {
         questions[j].answered = false;
     }
+    // Randomly select a Double Jeopardy question
+    double_jeopardy_index = rand() % NUM_QUESTIONS;
 }
 
 /*
@@ -133,8 +135,7 @@ void display_question(char *category, int value) {
             if (!questions[i].answered) {
                 printf("\nQuestion: %s\n", questions[i].question);
                 return;
-            }
-            else {
+            } else {
                 printf("This question has already been answered.\n");
                 return;
             }
@@ -152,27 +153,25 @@ void display_question(char *category, int value) {
  * - false: if the answer is incorrect or not formatted properly
  */
 bool valid_answer(char *category, int value, char *answer) {
+    char answer_copy[MAX_LEN];
+    strcpy(answer_copy, answer);
+    
+    char *token = strtok(answer_copy, " ");
+    if (!token || (strcmp(token, "what") != 0 && strcmp(token, "who") != 0)) return false;
+    token = strtok(NULL, " ");
+    if (!token || strcmp(token, "is") != 0) return false;
+    token = strtok(NULL, " ");
+    if (!token) return false;
+
     for (int i = 0; i < NUM_QUESTIONS; i++) {
         if (strcmp(questions[i].category, category) == 0 && questions[i].value == value) {
-            if (!questions[i].answered) {
-                // Tokenize answer to check required format
-                char *token = strtok(answer, " ");
-                if (token == NULL || (strcmp(token, "what") != 0 && strcmp(token, "who") != 0)) {
-                    return false;
-                }
-                token = strtok(NULL, " ");
-                if (token == NULL || strcmp(token, "is") != 0) {
-                    return false;
-                }
-                token = strtok(NULL, " ");
-                if (token != NULL && strcmp(token, questions[i].answer) == 0) {
-                    questions[i].answered = true;
-                    return true; // Correctly formatted and correct answer
-                }
+            if (!questions[i].answered && strcasecmp(token, questions[i].answer) == 0) {
+                questions[i].answered = true;
+                return true;
             }
         }
     }
-    return false; // Either incorrect answer or formatting issue
+    return false;
 }
 
 /*
