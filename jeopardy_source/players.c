@@ -7,27 +7,22 @@
  * All rights reserved.
  *
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "players.h"
 
-// Returns true if the player name matches one of the existing players
-bool player_exists(player *players, int num_players, char *name) {
-    for (int i = 0; i < num_players; i++) {
-        if (strcmp(players[i].name, name) == 0) {
-            return true;
-        }
+#include "players.h"
+#include <stdio.h>
+#include <string.h>
+
+void initialize_players(Player players[PLAYER_COUNT]) {
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        printf("Enter name for Player %d: ", i+1);
+        scanf("%s", players[i].name);
+        players[i].score = 0;
     }
-    return false;
 }
 
-// Go through the list of players and update the score for the player given their name
-void update_score(player *players, int num_players, char *name, int score) {
-    for (int i = 0; i < num_players; i++) {
-        if (strcmp(players[i].name, name) == 0) {
-            players[i].score += score; // Add points to the player's score
-            return;
-        }
+void display_scores(const Player players[PLAYER_COUNT]) {
+    printf("Current Scores:\n");
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        printf("%s: $%d\n", players[i].name, players[i].score);
     }
 }
