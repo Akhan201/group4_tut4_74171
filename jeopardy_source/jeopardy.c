@@ -100,17 +100,3 @@ int main(int argc, char *argv[])
     }
     return EXIT_SUCCESS;
 }  
-
- 
-
-
-
-
-
-
-
-
-
-
-    // An array of 4 players, may need to be a pointer if you want it set dynamically
- 
