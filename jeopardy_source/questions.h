@@ -8,50 +8,25 @@
  *
  */
 
-#ifndef QUESTIONS_H_
-#define QUESTIONS_H_
+#ifndef QUESTIONS_H
+#define QUESTIONS_H
 
 #include <stdbool.h>
 
-#define MAX_LEN 256
-#define NUM_CATEGORIES 3
-// The number of questions, you can use this in your functions in
-// questions.c, which are 15 standard questions + 1 bonus question
-#define NUM_QUESTIONS 16 
+#define CATEGORY_COUNT 3
+#define QUESTIONS_PER_CATEGORY 3
 
-// List of 3 categories as array of strings
-/* static char categories[NUM_CATEGORIES][MAX_LEN] = {
-    "programming", 
-    "algorithms", 
-    "databases"
-}; */
-
-// Questions struct for each question
+// Structure to store a Jeopardy question
 typedef struct {
-    char category[MAX_LEN];
-    char question[MAX_LEN];
-    char answer[MAX_LEN];
+    char category[500];
     int value;
+    char question[2560];
+    char answer[500];
     bool answered;
-} question;
+} Question;
 
-// An array of 16 questions (5 for each category + 1 Bonus), initialized in initialize_game
-// this may need to be a pointer if you want it set dynamically
-question questions[NUM_QUESTIONS];
-
-// Initializes the array of questions for the game
-extern void initialize_game(void);
-
-// Displays each of the remaining categories and question dollar values that have not been answered
-extern void display_categories(void);
-
-// Displays the question for the category and dollar value
-extern void display_question(char *category, int value);
-
-// Returns true if the answer is correct for the question for that category and dollar value
-extern bool valid_answer(char *category, int value, char *answer);
-
-// Returns true if the question has already been answered
-extern bool already_answered(char *category, int value);
-
-#endif /* QUESTIONS_H_ */
+void initialize_questions(Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY]);
+void display_questions(const Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY]);
+bool validate_question(const Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY], const char *category, int value);
+bool check_answer(Question *q, const char *player_answer);
+#endif
