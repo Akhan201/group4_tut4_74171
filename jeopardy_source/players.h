@@ -11,13 +11,14 @@
 #ifndef PLAYERS_H
 #define PLAYERS_H
 
-#define PLAYER_COUNT 4
-
 typedef struct {
     char name[50];
     int score;
 } Player;
 
-void initialize_players(Player players[PLAYER_COUNT]);
-void display_scores(const Player players[PLAYER_COUNT]);
+void initializePlayers(Player players[], int numPlayers);
+int isValidPlayer(Player players[], int numPlayers, const char* playerName);
+void updateScore(Player players[], int numPlayers, const char* playerName, int dollarAmount);
+void displayFinalScores(Player players[], int numPlayers);
+
 #endif
