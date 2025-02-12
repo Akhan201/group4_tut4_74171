@@ -8,139 +8,100 @@
  *
  */
 
-// questions.c
-#include "questions.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>  // for isspace() function
+#include "questions.h"
 
-// Function to trim leading and trailing spaces from a string
-void trim_spaces(char *str) {
-    int start = 0, end = strlen(str) - 1;
-    
-    // Trim leading spaces
-    while (start <= end && isspace((unsigned char)str[start])) {
-        start++;
-    }
-    
-    // Trim trailing spaces
-    while (end >= start && isspace((unsigned char)str[end])) {
-        end--;
-    }
-    
-    // Shift the string to the left and terminate it at the new end
-    for (int i = start; i <= end; i++) {
-        str[i - start] = str[i];
-    }
-    str[end - start + 1] = '\0';
-}
+#define MAX_QUESTIONS 12  // Increase this to 12 to accommodate all questions from three categories
 
-void initialize_questions(Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY]) {
-    const char *categories[] = {"Programming", "Algorithms", "Databases"};
-    int values[] = {200, 400, 600, 800};
-    
-    // Questions and answers for each category
-    const char *questions_text[][4] = {
-        {
-            "This language is known for its use in system programming.",
-            "This keyword is used to define a function in Python.",
-            "This language is used for Android app dev.",
-            "The Father of AI"
-        },
-        {
-            "This algorithm is used to find the shortest path in a graph.",
-            "This sorting algorithm has an average time complexity of O(n log n) and follows a divide-and-conquer approach.",
-            "This algorithm is used for searching in a Balanced Binary Search Tree (BST).",
-            "This algorithm uses a priority queue, LIFO."
-        },
-        {
-            "Structured collection of data that allows users to store, manage, and retrieve information.",
-            "A popular NoSQL database that stores data as JSON-like documents.",
-            "The company that first played around with databases.",
-            "Who co-founded Microsoft and oversaw the creation of SQL Server?"
-        }
-    };
-    
-    const char *answers_text[][4] = {
-        {
-            "What is C?",
-            "What is def?",
-            "What is Java?",
-            "Who is Alan Turing?"
-        },
-        {
-            "What is Dijkstra?",
-            "What is Merge Sort?",
-            "What is Binary Search?",
-            "What is BFS?"
-        },
-        {
-            "What is a database?",
-            "What is MongoDB?",
-            "Who is IBM?",
-            "Who is Bill Gates?"
-        }
-    };
-    
-    for (int i = 0; i < CATEGORY_COUNT; i++) {
-        for (int j = 0; j < QUESTIONS_PER_CATEGORY; j++) {
-            // Assigning the new category, value, question, and answer
-            strcpy(questions[i][j].category, categories[i]);
-            questions[i][j].value = values[j];
-            sprintf(questions[i][j].question, "%s", questions_text[i][j]);
-            sprintf(questions[i][j].answer, "%s", answers_text[i][j]);
-            questions[i][j].answered = false;
+typedef struct {
+    char category[50];
+    int dollarAmount;
+    char question[200];
+    char correctAnswer[100];
+    int answered;
+} Question;
+
+// Question Bank - 3 Categories, 4 Questions EACH
+Question questionBank[MAX_QUESTIONS] = {
+    // Algorithms category
+    {"Algorithms", 200, "This algorithm is used to find the shortest path in a graph.", "Dijkstra", 0},
+    {"Algorithms", 400, "This sorting algorithm has an average time complexity of O(n log n) and follows a divide-and-conquer approach.", "Merge Sort", 0},
+    {"Algorithms", 600, "This algorithm is used for searching in a Balanced Binary Search Tree (BST).", "Binary Search", 0},
+    {"Algorithms", 800, "This algorithm uses a priority queue, LIFO.", "BFS", 0},
+
+    // Database category
+    {"Database", 200, "Structured collection of data that allows users to store, manage, and retrieve information.", "database", 0},
+    {"Database", 400, "A popular NoSQL database that stores data as JSON-like documents.", "MongoDB", 0},
+    {"Database", 600, "The company that first played around with databases.", "IBM", 0},
+    {"Database", 800, "Who co-founded Microsoft and oversaw the creation of SQL Server?", "Bill Gates", 0},
+
+    // Programming Category
+    {"Programming", 200, "This language is known for its use in system programming.", "What is C?", 0},
+    {"Programming", 400, "This keyword is used to define a function in Python.", "What is def?", 0},
+    {"Programming", 600, "This language is used for Android app dev.", "What is Java?", 0},
+    {"Programming", 800, "The Father of AI", "Who is Alan Turing?", 0}
+};
+
+void displayCategoriesAndQuestions() {
+    printf("\nCategories and Questions:\n");
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (questionBank[i].answered == 0) {
+            printf("%s %d\n", questionBank[i].category, questionBank[i].dollarAmount);
         }
     }
 }
 
-void display_questions(const Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY]) {
-    printf("Available Questions:\n");
-    for (int i = 0; i < CATEGORY_COUNT; i++) {
-        printf("%s: ", questions[i][0].category);
-        for (int j = 0; j < QUESTIONS_PER_CATEGORY; j++) {
-            if (!questions[i][j].answered) {
-                printf("$%d ", questions[i][j].value);
-            }
+int isQuestionAnswered(const char* category, int dollarAmount) {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (strcmp(questionBank[i].category, category) == 0 && questionBank[i].dollarAmount == dollarAmount) {
+            return questionBank[i].answered;
         }
-        printf("\n");
+    }
+    return 0;
+}
+
+void getQuestion(const char* category, int dollarAmount) {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (strcmp(questionBank[i].category, category) == 0 && questionBank[i].dollarAmount == dollarAmount) {
+            printf("%s\n", questionBank[i].question);
+            return;
+        }
     }
 }
 
-bool validate_question(const Question questions[CATEGORY_COUNT][QUESTIONS_PER_CATEGORY], const char *category, int value) {
-    for (int i = 0; i < CATEGORY_COUNT; i++) {
-        for (int j = 0; j < QUESTIONS_PER_CATEGORY; j++) {
-            if (strcmp(questions[i][j].category, category) == 0 && questions[i][j].value == value && !questions[i][j].answered) {
-                return true;
+int checkAnswer(const char* answer, const char* category, int dollarAmount) {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (strcmp(questionBank[i].category, category) == 0 && questionBank[i].dollarAmount == dollarAmount) {
+            if (strstr(answer, questionBank[i].correctAnswer) != NULL) {
+                return 1;
             }
         }
     }
-    return false;
+    return 0;
 }
 
-bool check_answer(Question *q, const char *player_answer) {
-    char trimmed_answer[256];
-    strcpy(trimmed_answer, player_answer);
-
-    // Trim any leading/trailing spaces from the player's answer
-    trim_spaces(trimmed_answer);
-
-    // Check for "What is" or "Who is" prefix and adjust accordingly
-    if (strncmp(trimmed_answer, "What is ", 8) == 0) {
-        // Compare the rest of the answer (after the "What is ")
-        if (strcasecmp(trimmed_answer + 8, q->answer) == 0) {
-            q->answered = true;
-            return true;
-        }
-    } else if (strncmp(trimmed_answer, "Who is ", 7) == 0) {
-        // Compare the rest of the answer (after the "Who is ")
-        if (strcasecmp(trimmed_answer + 7, q->answer) == 0) {
-            q->answered = true;
-            return true;
+void displayCorrectAnswer(const char* category, int dollarAmount) {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (strcmp(questionBank[i].category, category) == 0 && questionBank[i].dollarAmount == dollarAmount) {
+            printf("%s\n", questionBank[i].correctAnswer);
         }
     }
+}
 
-    // If the answer doesn't match, mark it as answered but incorrect
-    q->answered = true;
-    return false;
+void markQuestionAsAnswered(const char* category, int dollarAmount) {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (strcmp(questionBank[i].category, category) == 0 && questionBank[i].dollarAmount == dollarAmount) {
+            questionBank[i].answered = 1;
+        }
+    }
+}
+
+int allQuestionsAnswered() {
+    for (int i = 0; i < MAX_QUESTIONS; i++) {
+        if (questionBank[i].answered == 0) {
+            return 0;
+        }
+    }
+    return 1;
 }
