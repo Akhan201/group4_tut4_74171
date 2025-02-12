@@ -15,88 +15,103 @@
 #include "players.h"
 #include "jeopardy.h"
 
-
-// Put macros or constants here using #define
 #define BUFFER_LEN 256
 #define NUM_PLAYERS 4
 #define MAX_LENGTH 20
 
+// Function declarations
+void display_answer(char *category, int value);
+bool all_questions_answered(void);
 
-// Put global environment variables here
-char *name;
-
-// Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-void tokenize(char *input, char **tokens){
-// Tokenize the input string based on spaces
-    char *token = strtok(input, " ");
-    int index = 0;
-
-    // Iterate through the tokens
-    while (token != NULL) {
-        tokens[index++] = token;
-        token = strtok(NULL, " ");
-    }
-
-    // Null-terminate the tokens array
-    tokens[index] = NULL;
-
-}
-
-// Displays the game results for each player, their name and final score, ranked from first to last place
-void show_results(player *players, int num_players){
-printf("\n===== Final Results =====\n");
-printf("%-20s %s\n", "Player Name", "Score");
-printf("============================\n");
-for (int i = 0; i < num_players - 1; i++) {
+// Function to show results
+void show_results(player *players, int num_players) {
+    printf("\n===== Final Results =====\n");
+    printf("%-20s %s\n", "Player Name", "Score");
+    printf("============================\n");
+    
+    // Sorting players based on their scores (descending order)
+    for (int i = 0; i < num_players - 1; i++) {
         for (int j = i + 1; j < num_players; j++) {
             if (players[i].score < players[j].score) {
-                // Swap players[i] and players[j]
                 player temp = players[i];
                 players[i] = players[j];
                 players[j] = temp;
             }
         }
     }
- // Display sorted player names and scores
+
+    // Display sorted player names and scores
     for (int i = 0; i < num_players; i++) {
         printf("%-20s %d\n", players[i].name, players[i].score);
     }
-return 0;
-
 }
 
-int main(int argc, char *argv[])
-{
-    // An array of 4 players, may need to be a pointer if you want it set dynamically
+// Main game loop
+int main(int argc, char *argv[]) {
     player players[NUM_PLAYERS];
-    
-    // Input buffer and and commands
     char buffer[BUFFER_LEN] = { 0 };
+    char name[MAX_LENGTH];
+    int chosen_value;
+    char chosen_category[MAX_LENGTH];
 
-    // Display the game introduction and initialize the questions
-    printf("This is JEOPARDY!!)
+    // Display introduction
+    printf("Welcome to JEOPARDY!\n");
     initialize_game();
-    
-	// Prompt for players' names
-	// initialize each of the players in the array
+
+    // Get player names
     for (int i = 0; i < NUM_PLAYERS; i++) {
         printf("Please enter player %d's name: ", i + 1);
         scanf("%s", players[i].name);
         players[i].score = 0; // Initialize player score
-    }   
-  
-    // Perform an infinite loop getting command input from users until game ends
-    while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
-    {
-        // Call functions from the questions and players source files
-	display_catagories ();
-	display_question();
-	already_answered();
-	player_exists();
-	update_score();
-        // Display the final results and exit
-        show_results(players, NUM_PLAYERS);
-        
     }
+
+    while (1) {
+        // Display remaining categories and their values
+        display_categories();
+
+        // Get player selection
+        printf("\nEnter the name of the player who will pick the next category: ");
+        scanf("%s", name);
+        
+        // Validate that player exists
+        if (!player_exists(players, NUM_PLAYERS, name)) {
+            printf("Invalid player name. Please try again.\n");
+            continue;
+        }
+
+        // Player selects a category and value
+        printf("\n%s, enter the category and dollar amount (e.g., programming 100): ", name);
+        scanf("%s %d", chosen_category, &chosen_value);
+
+        // Check if the selected category and value have already been answered
+        if (already_answered(chosen_category, chosen_value)) {
+            printf("This question has already been answered.\n");
+            continue;
+        }
+
+        // Display the question for the selected category and value
+        display_question(chosen_category, chosen_value);
+
+        // Get the player's answer
+        printf("Your answer: ");
+        fgets(buffer, BUFFER_LEN, stdin);  // to capture any extra newline
+        fgets(buffer, BUFFER_LEN, stdin);  // Get the answer
+
+        // Tokenize and check if answer is valid
+        if (valid_answer(chosen_category, chosen_value, buffer)) {
+            printf("Correct!\n");
+            update_score(players, NUM_PLAYERS, name, chosen_value);
+        } else {
+            printf("Incorrect! The correct answer was: ");
+            display_answer(chosen_category, chosen_value);
+        }
+
+        // Show results at the end of the game
+        if (all_questions_answered()) {
+            show_results(players, NUM_PLAYERS);
+            break;
+        }
+    }
+
     return EXIT_SUCCESS;
-}  
+}
