@@ -37,10 +37,10 @@ Question questionBank[MAX_QUESTIONS] = {
     {"Database", 800, "Who co-founded Microsoft and oversaw the creation of SQL Server?", "Bill Gates", 0},
 
     // Programming Category
-    {"Programming", 200, "This language is known for its use in system programming.", "What is C?", 0},
-    {"Programming", 400, "This keyword is used to define a function in Python.", "What is def?", 0},
-    {"Programming", 600, "This language is used for Android app dev.", "What is Java?", 0},
-    {"Programming", 800, "The Father of AI", "Who is Alan Turing?", 0}
+    {"Programming", 200, "This language is known for its use in system programming.", "C", 0},
+    {"Programming", 400, "This keyword is used to define a function in Python.", "def", 0},
+    {"Programming", 600, "This language is used for Android app dev.", "Java", 0},
+    {"Programming", 800, "The Father of AI", "Alan Turing", 0}
 };
 
 void displayCategoriesAndQuestions() {
