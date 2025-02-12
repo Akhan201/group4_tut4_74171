@@ -48,6 +48,8 @@ void show_results(player *players, int num_players) {
 
 // Main game loop
 int main(int argc, char *argv[]) {
+    (void)argc;  // Mark as unused
+    (void)argv;
     player players[NUM_PLAYERS];
     char buffer[BUFFER_LEN] = { 0 };
     char name[MAX_LENGTH];
